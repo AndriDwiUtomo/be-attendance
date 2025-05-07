@@ -1,9 +1,17 @@
+require('dotenv').config();
+
 module.exports = {
-  HOST: "localhost",
-  USER: "root",
-  PASSWORD: "DB123456",
-  DB: "db_shalat",
+  HOST: process.env.DB_HOST,
+  USER: process.env.DB_USER,
+  PASSWORD: process.env.DB_PASSWORD,
+  DB: process.env.DB_NAME,
+  PORT: process.env.DB_PORT,
   dialect: "mysql",
+  dialectOptions: {
+    ssl: {
+      ca: fs.readFileSync(path.join(__dirname, "certs", "ca.pem"))
+    }
+  },
   pool: {
     max: 5,
     min: 0,
