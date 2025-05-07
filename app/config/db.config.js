@@ -1,4 +1,6 @@
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 
 module.exports = {
   HOST: process.env.DB_HOST,
