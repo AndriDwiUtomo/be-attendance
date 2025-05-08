@@ -1,3 +1,4 @@
+require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 
@@ -6,7 +7,8 @@ console.log({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   db: process.env.DB_NAME,
-  port: process.env.DB_PORT
+  port: process.env.DB_PORT,
+  hoi: process.env.RAILWAY_PRIVATE_DOMAIN
 });
 
 module.exports = {
