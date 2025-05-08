@@ -2,6 +2,8 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 
+console.log("Port DB:", process.env.DB_PORT);
+
 module.exports = {
   HOST: process.env.DB_HOST,
   USER: process.env.DB_USER,
