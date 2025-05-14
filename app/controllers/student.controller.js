@@ -3,6 +3,7 @@ const { Op } = require('sequelize');
 const Student = db.student;
 const Class = db.classes;
 const response = require("../utils/response");
+const XLSX = require("xlsx");
 
 exports.create = async (req, res) => {
   try {
@@ -83,6 +84,51 @@ exports.delete = async (req, res) => {
     const deleted = await Student.destroy({ where: { id: req.params.id } });
     if (!deleted) return response.error(res, "Siswa tidak ditemukan", 404);
     response.success(res, "Siswa berhasil dihapus", null);
+  } catch (err) {
+    response.error(res, err.message);
+  }
+};
+
+exports.importStudents = async (req, res) => {
+  try {
+    if (!req.file) {
+      return response.error(res, "File tidak ditemukan", 400);
+    }
+
+    // Baca file Excel
+    const workbook = XLSX.readFile(req.file.path);
+    const sheetName = workbook.SheetNames[0];
+    const sheet = workbook.Sheets[sheetName];
+    const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+    
+    // Format data dan insert ke DB
+    const students = jsonData.map((row) => {
+      let birthDate = null;
+
+      if (typeof row.birth_date === "number") {
+        const parsed = XLSX.SSF.parse_date_code(row.birth_date);
+        birthDate = new Date(parsed.y, parsed.m - 1, parsed.d);
+      } else if (typeof row.birth_date === "string") {
+        const parts = row.birth_date.split(/[-\/]/);
+        if (parts.length === 3) {
+          birthDate = new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+        }
+      }
+
+
+      return {
+        name: row.name,
+        nis: row.nis,
+        gender: row.gender,
+        classId: row.classId,
+        birth_date: birthDate,
+      };
+    });
+
+    const result = await Student.bulkCreate(students, { ignoreDuplicates: true });
+
+    response.success(res, "Import data siswa berhasil", result);
   } catch (err) {
     response.error(res, err.message);
   }

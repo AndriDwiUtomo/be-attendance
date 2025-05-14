@@ -39,8 +39,6 @@ db.sequelize.sync();
 //   initial();
 // });
 
-app.use(cors());
-
 // simple route
 app.get("/", (req, res) => {
   res.json({ message: "Welcome to bezkoder application." });
