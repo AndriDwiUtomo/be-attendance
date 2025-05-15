@@ -5,4 +5,6 @@ module.exports = app => {
 
     // POST: Tandai siswa hadir
     app.post("/api/attendances", controller.markAttendance);
+
+    app.get('/api/attendances/export', controller.exportAttendanceToExcel);
 };
